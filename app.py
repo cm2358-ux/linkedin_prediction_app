@@ -15,9 +15,10 @@ import plotly.graph_objects as go
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 from sklearn.calibration import calibration_curve
 
-# -------------------------------------------------------
-# STREAMLIT CONFIG & GLOBAL STYLE
-# -------------------------------------------------------
+
+# -------------------------------------------------
+# Streamlit Configuration and Global Style
+# -------------------------------------------------
 st.set_page_config(page_title="LinkedIn User Prediction App", layout="wide")
 
 st.markdown("""
@@ -29,13 +30,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
 # Tooltip helper
 def info(text):
     return f"<span title='{text}' style='cursor: help;'> Info</span>"
 
 
 # -------------------------------------------------------
-# LOAD MODEL & APPLY DATA CLEANING RULES
+# Load Model and Apply Data Cleaning
 # -------------------------------------------------------
 try:
     lr = joblib.load("model.pkl")
@@ -45,29 +47,34 @@ except:
 
 df = pd.read_csv("social_media_usage.csv")
 
-# Create binary LinkedIn usage
+# Target variable: LinkedIn user
 df["sm_li"] = (df["web1h"] == 1).astype(int)
 
-# Recode gender (female = 1, male = 0)
+# Binary gender (female = 1, male = 0)
 df["female"] = df["gender"].map({1: 0, 2: 1})
 
 # Rename columns to match model expectation
 df = df.rename(columns={"educ2": "education", "par": "parent", "marital": "married"})
+
+# Recode parent and married to binary (required to match the model)
+df["parent"] = (df["parent"] == 1).astype(int)
+df["married"] = (df["married"] == 1).astype(int)
 
 # Apply valid ranges (cleaning rules)
 df["income"] = df["income"].where(df["income"].between(1, 9))
 df["education"] = df["education"].where(df["education"].between(1, 8))
 df["age"] = df["age"].where(df["age"].between(1, 97))
 
-# Remove rows with missing values
+# Remove missing values
 df = df.dropna(subset=["income", "education", "parent", "married", "female", "age", "sm_li"])
 
+# Feature matrix and target vector
 X = df[["income", "education", "parent", "married", "female", "age"]]
 y = df["sm_li"]
 
 
-# -------------------------------------------------------
-# LABEL DICTIONARIES
+# -----------------------------------------------------
+# Label Dictionaries
 # -------------------------------------------------------
 income_labels = {
     1:"Less than $10K", 2:"$10K–$20K", 3:"$20K–$30K",
@@ -83,23 +90,28 @@ education_labels = {
 
 
 # -------------------------------------------------------
-# SIDEBAR INPUTS
-# -------------------------------------------------------
+# Sidebar Inputs
+# ------------------------------------------------------
 with st.sidebar:
     st.markdown("## Demographic Inputs")
 
-    income = st.selectbox("Income", list(income_labels.keys()), format_func=lambda x: income_labels[x])
-    education = st.selectbox("Education", list(education_labels.keys()), format_func=lambda x: education_labels[x])
+    income = st.selectbox("Income", list(income_labels.keys()),
+                          format_func=lambda x: income_labels[x])
+
+    education = st.selectbox("Education", list(education_labels.keys()),
+                             format_func=lambda x: education_labels[x])
+
     parent = st.selectbox("Parent", ["No", "Yes"])
     married = st.selectbox("Married", ["No", "Yes"])
     gender = st.selectbox("Gender", ["Male", "Female"])
     age = st.slider("Age", 18, 97, 42)
 
-# Convert sidebar inputs to model-ready format
+# Convert sidebar inputs to model-ready numeric format
 parent_val = 1 if parent == "Yes" else 0
 married_val = 1 if married == "Yes" else 0
 female_val = 1 if gender == "Female" else 0
 
+# Single-row dataframe for prediction
 person = pd.DataFrame({
     "income":[income],
     "education":[education],
@@ -110,11 +122,12 @@ person = pd.DataFrame({
 })
 
 
-# -------------------------------------------------------
-# MAIN TABS
+# ----------------------------------------------------
+# Main Tabs
 # -------------------------------------------------------
 tab_pred, tab_dynamic, tab_shap, tab_marketing, tab_perf = st.tabs(
-    ["Prediction", "Interactive Analytics", "SHAP Explanation", "Marketing Insights", "Model Performance"]
+    ["Prediction", "Interactive Analytics", "SHAP Explanation",
+     "Marketing Insights", "Model Performance"]
 )
 
 
