@@ -1,5 +1,5 @@
 # ============================================================
-# LINKEDIN USER PREDICTION DASHBOARD — FINAL FULL VERSION
+# LINKEDIN USER PREDICTION DASHBOARD — FINAL VERSION
 # ============================================================
 
 import streamlit as st
@@ -121,7 +121,7 @@ person = pd.DataFrame({
 
 
 # ------------------------------------------------------------
-# Main Tabs (Final Order)
+# Main Tabs
 # ------------------------------------------------------------
 tab_pred, tab_dynamic, tab_marketing, tab_shap, tab_perf = st.tabs(
     ["Prediction","Interactive Analytics","Marketing Insights","SHAP Explanation","Model Performance"]
@@ -265,7 +265,7 @@ with tab_dynamic:
 
 
 # ============================================================
-# TAB 3 — MARKETING INSIGHTS (Version B)
+# TAB 3 — MARKETING INSIGHTS
 # ============================================================
 with tab_marketing:
 
