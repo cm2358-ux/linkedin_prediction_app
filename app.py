@@ -206,51 +206,121 @@ with tab_pred:
 # ======================================================
 with tab_dynamic:
 
-    st.markdown(f"## Interactive Analytics {info('Explore dataset patterns using filters.')}", unsafe_allow_html=True)
+    st.markdown(
+        f"## Interactive Analytics {info('Explore how LinkedIn usage varies across demographic segments.')}",
+        unsafe_allow_html=True
+    )
+
+    # --------------------------------------------------
+    # Filter Controls
+    # --------------------------------------------------
+    st.markdown("Use the filters below to explore patterns in the dataset:")
 
     col1, col2, col3 = st.columns(3)
+
     with col1:
         f_income = st.checkbox("Filter by Income", True)
         f_parent = st.checkbox("Filter by Parent", True)
+
     with col2:
         f_edu = st.checkbox("Filter by Education", True)
         f_mar = st.checkbox("Filter by Marital Status", True)
+
     with col3:
         f_gender = st.checkbox("Filter by Gender", True)
 
+    # --------------------------------------------------
+    # Apply Filters
+    # --------------------------------------------------
     df_filtered = df.copy()
-    if f_income: df_filtered = df_filtered[df_filtered["income"] == income]
-    if f_edu: df_filtered = df_filtered[df_filtered["education"] == education]
-    if f_parent: df_filtered = df_filtered[df_filtered["parent"] == parent_val]
-    if f_mar: df_filtered = df_filtered[df_filtered["married"] == married_val]
-    if f_gender: df_filtered = df_filtered[df_filtered["female"] == female_val]
 
-    st.markdown(f"### Filtered Dataset Overview {info('Shows number of rows that match selected criteria.')}", unsafe_allow_html=True)
+    if f_income:
+        df_filtered = df_filtered[df_filtered["income"] == income]
+    if f_edu:
+        df_filtered = df_filtered[df_filtered["education"] == education]
+    if f_parent:
+        df_filtered = df_filtered[df_filtered["parent"] == parent_val]
+    if f_mar:
+        df_filtered = df_filtered[df_filtered["married"] == married_val]
+    if f_gender:
+        df_filtered = df_filtered[df_filtered["female"] == female_val]
+
+    # --------------------------------------------------
+    # Filtered Dataset Summary
+    # --------------------------------------------------
+    st.markdown(
+        f"### Filtered Dataset Overview {info('Number of observations matching selected filters.')}",
+        unsafe_allow_html=True
+    )
     st.write(f"Rows returned: **{len(df_filtered)}**")
 
+    # Add labels for clarity in pie chart
+    df_filtered["li_label"] = df_filtered["sm_li"].map({0: "Non-User", 1: "User"})
+
+    # --------------------------------------------------
+    # Visualizations for Filtered Subset
+    # --------------------------------------------------
     if len(df_filtered) > 0:
 
-        st.markdown(f"### LinkedIn Usage Breakdown {info('Percentage of LinkedIn vs non-users.')}", unsafe_allow_html=True)
-        st.plotly_chart(px.pie(df_filtered, names="sm_li", color="sm_li",
-            color_discrete_map={0:"red",1:"green"}), use_container_width=True)
+        # LinkedIn Usage Breakdown
+        st.markdown(
+            f"### LinkedIn Usage Breakdown {info('Shows the proportion of users vs non-users.')}",
+            unsafe_allow_html=True
+        )
+        st.plotly_chart(
+            px.pie(
+                df_filtered,
+                names="li_label",
+                color="li_label",
+                color_discrete_map={"Non-User": "red", "User": "green"}
+            ),
+            use_container_width=True
+        )
 
-        st.markdown(f"### Age Distribution {info('Distribution of ages in the filtered subset.')}", unsafe_allow_html=True)
-        st.plotly_chart(px.histogram(df_filtered, x="age", nbins=20,
-                                     color_discrete_sequence=["cyan"]),
-                        use_container_width=True)
+        # Age Distribution
+        st.markdown(
+            f"### Age Distribution {info('Distribution of ages in the filtered subset.')}",
+            unsafe_allow_html=True
+        )
+        st.plotly_chart(
+            px.histogram(
+                df_filtered,
+                x="age",
+                nbins=20,
+                labels={"age": "Age"},
+                color_discrete_sequence=["cyan"]
+            ),
+            use_container_width=True
+        )
 
-    st.markdown(f"### Age Probability Curve {info('Predicted LinkedIn probability as age varies.')}", unsafe_allow_html=True)
+    # --------------------------------------------------
+    # Model-Based Age Probability Curve
+    # --------------------------------------------------
+    st.markdown(
+        f"### Age Probability Curve {info('Predicted LinkedIn probability as age varies while holding other attributes constant.')}",
+        unsafe_allow_html=True
+    )
 
-    ages = np.arange(18,98)
+    ages = np.arange(18, 98)
     sweep = pd.DataFrame({
-        "income":income, "education":education,
-        "parent":parent_val, "married":married_val,
-        "female":female_val, "age":ages
+        "income": income,
+        "education": education,
+        "parent": parent_val,
+        "married": married_val,
+        "female": female_val,
+        "age": ages
     })
 
-    st.plotly_chart(px.line(x=ages, y=lr.predict_proba(sweep)[:,1],
-        labels={"x":"Age","y":"Predicted Probability"},
-        title="Predicted Probability Across Age"), use_container_width=True)
+    st.plotly_chart(
+        px.line(
+            x=ages,
+            y=lr.predict_proba(sweep)[:, 1],
+            labels={"x": "Age", "y": "Predicted Probability"},
+            title="Predicted Probability Across Age"
+        ),
+        use_container_width=True
+    )
+
 
 
 # ======================================================
