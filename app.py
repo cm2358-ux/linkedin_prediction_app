@@ -131,52 +131,73 @@ tab_pred, tab_dynamic, tab_shap, tab_marketing, tab_perf = st.tabs(
 )
 
 
-# ======================================================
+# --------------------------------------------------
 # TAB 1 — PREDICTION
-# ======================================================
+# -------------------------------------------------
 with tab_pred:
 
     st.markdown("<h2 class='big-title'>Prediction Results</h2>", unsafe_allow_html=True)
 
-    st.markdown(f"### Profile Summary {info('Inputs used to generate the prediction.')}", unsafe_allow_html=True)
+    st.markdown(
+        f"### Profile Summary {info('Inputs used to generate the prediction.')}", 
+        unsafe_allow_html=True
+    )
+
     st.markdown(f"""
     <div class='profile-box'>
-        <b>Income:</b> {income_labels[income]}<br>
-        <b>Education:</b> {education_labels[education]}<br>
-        <b>Parent:</b> {parent}<br>
-        <b>Married:</b> {married}<br>
+        <b>Age:</b> {age}<br>
         <b>Gender:</b> {gender}<br>
-        <b>Age:</b> {age}
+        <b>Education:</b> {education_labels[education]}<br>
+        <b>Income:</b> {income_labels[income]}<br>
+        <b>Married:</b> {married}<br>
+        <b>Parent:</b> {parent}
     </div>
     """, unsafe_allow_html=True)
 
+    # Compute prediction and probability
     proba = lr.predict_proba(person)[0][1]
     prediction = "LinkedIn User" if proba >= 0.5 else "Not a LinkedIn User"
     color = "#1b5e20" if prediction == "LinkedIn User" else "#8b0000"
 
+    # Prediction box
     st.markdown(f"""
     <div class='pred-box' style='background:{color}'>
         {prediction}<br>
-        <span style='font-size:18px'>Probability: {proba:.3f}</span>
+        <span style='font-size:18px'>
+            Probability: {proba:.3f} ({proba*100:.1f}%)
+        </span>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"### Probability Gauge {info('Visual gauge of predicted LinkedIn usage probability.')}", unsafe_allow_html=True)
+    # Short explanatory text
+    st.markdown(
+        "This probability reflects the model’s estimate of LinkedIn usage "
+        "given the selected demographic attributes."
+    )
+
+    st.markdown("---")
+
+    # Probability Gauge
+    st.markdown(
+        f"### Probability Gauge {info('Visual gauge of predicted LinkedIn usage probability.')}", 
+        unsafe_allow_html=True
+    )
 
     gauge = go.Figure(go.Indicator(
         mode="gauge+number",
         value=proba * 100,
         gauge={
-            "axis": {"range":[0,100]},
-            "steps":[
-                {"range":[0,25],"color":"#8b0000"},
-                {"range":[25,50],"color":"#ff6347"},
-                {"range":[50,75],"color":"#ffd700"},
-                {"range":[75,100],"color":"#2e8b57"},
+            "axis": {"range": [0, 100]},
+            "steps": [
+                {"range": [0, 25], "color": "#8b0000"},
+                {"range": [25, 50], "color": "#ff6347"},
+                {"range": [50, 75], "color": "#ffd700"},
+                {"range": [75, 100], "color": "#2e8b57"},
             ],
-            "bar":{"color":"white"}
+            "bar": {"color": color}  # matched to prediction color
         }
     ))
+
     st.plotly_chart(gauge, use_container_width=True)
 
 
