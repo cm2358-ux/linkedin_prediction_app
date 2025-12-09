@@ -264,9 +264,9 @@ with tab_dynamic:
 
 
 
-# ========================================
+# ==========================
 # TAB 3 — MARKETING INSIGHTS
-# ========================================
+# ===========================
 with tab_marketing:
 
     st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
