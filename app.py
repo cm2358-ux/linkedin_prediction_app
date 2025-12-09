@@ -1,6 +1,6 @@
-# ===============================================================
-# LINKEDIN USER PREDICTION DASHBOARD — IMPROVED FULL VERSION
-# ===============================================================
+# ======================================
+# LinkedIn User Prediction Dashboard
+# ========================================
 
 import streamlit as st
 import pandas as pd
@@ -15,9 +15,9 @@ import plotly.graph_objects as go
 from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 from sklearn.calibration import calibration_curve
 
-# --------------------------------------------------------------
+# ---------------------------------------
 # Streamlit Page Config + Theme Styling
-# --------------------------------------------------------------
+# -----------------------------------
 st.set_page_config(page_title="LinkedIn Prediction Dashboard", layout="wide")
 
 st.markdown("""
@@ -33,10 +33,9 @@ st.markdown("""
 def info(text):  
     return f"<span title='{text}' style='cursor: help;'> ⓘ</span>"
 
-
-# --------------------------------------------------------------
+# -----------------------
 # Load Model + Dataset
-# --------------------------------------------------------------
+# -----------------------
 try:
     lr = joblib.load("model.pkl")
 except:
@@ -45,9 +44,9 @@ except:
 
 df = pd.read_csv("social_media_usage.csv")
 
-# --------------------------------------------------------------
+# ------------------------------------
 # Data Cleaning + Feature Engineering
-# --------------------------------------------------------------
+# -------------------------------------
 df["sm_li"] = (df["web1h"] == 1).astype(int)
 df["female"] = df["gender"].map({1: 0, 2: 1})
 
@@ -77,9 +76,9 @@ education_labels = {
 }
 
 
-# --------------------------------------------------------------
+# --------------
 # Sidebar Inputs
-# --------------------------------------------------------------
+# ----------------
 with st.sidebar:
     st.markdown("## Demographic Inputs")
 
@@ -104,17 +103,17 @@ person = pd.DataFrame({
 })
 
 
-# --------------------------------------------------------------
-# PAGE TABS
-# --------------------------------------------------------------
+# -------------
+# Page Tabs
+# ------------
 tab_pred, tab_dynamic, tab_marketing, tab_shap, tab_perf = st.tabs(
-    ["Prediction","Interactive Analytics","Marketing Insights","SHAP Explanation","Model Performance"]
+    ["Prediction","Interactive Analytics","SHAP Explanation","Marketing Insights","Model Performance"]
 )
 
 
-# ==============================================================
-# TAB 1 — PREDICTION RESULTS
-# ==============================================================
+# ==========================
+# Tab 1 - Predictive Results
+# ============================
 with tab_pred:
 
     st.markdown("<h2 class='big-title'>Prediction Results</h2>", unsafe_allow_html=True)
@@ -166,9 +165,9 @@ with tab_pred:
     st.plotly_chart(gauge, use_container_width=True)
 
 
-# ==============================================================
-# TAB 2 — INTERACTIVE ANALYTICS
-# ==============================================================
+# ========================================
+# Tab 2 - Interactive Filtering/Analytics
+# =======================================
 with tab_dynamic:
 
     st.markdown("<h2 class='big-title'>Interactive Analytics</h2>", unsafe_allow_html=True)
@@ -225,90 +224,10 @@ with tab_dynamic:
     )
 
 
-# ==============================================================
-# TAB 3 — MARKETING INSIGHTS
-# ==============================================================
-with tab_marketing:
 
-    st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
-
-    st.markdown("""
-    ### Executive Summary  
-    The model highlights which demographic segments show the strongest likelihood 
-    of LinkedIn adoption. These insights guide audience targeting, messaging strategy, 
-    and high-ROI segmentation.
-    """)
-
-    df_seg = df.copy()
-
-    # EDUCATION
-    st.markdown("## 1. Education Level")
-    edu_rates = df_seg.groupby("education")["sm_li"].mean()
-    st.plotly_chart(
-        px.bar(x=[education_labels[i] for i in edu_rates.index], y=edu_rates, title="Usage by Education"),
-        use_container_width=True
-    )
-
-    # INCOME
-    st.markdown("## 2. Income Level")
-    inc_rates = df_seg.groupby("income")["sm_li"].mean()
-    st.plotly_chart(
-        px.bar(x=[income_labels[i] for i in inc_rates.index], y=inc_rates, title="Usage by Income"),
-        use_container_width=True
-    )
-
-    # AGE GROUPS
-    st.markdown("## 3. Age Groups")
-    df_seg["age_group"] = pd.cut(df_seg["age"], bins=[18,25,35,45,55,65,120],
-                                 labels=["18–25","26–35","36–45","46–55","56–65","65+"])
-    age_rates = df_seg.groupby("age_group")["sm_li"].mean()
-    st.plotly_chart(
-        px.line(x=age_rates.index.astype(str), y=age_rates, markers=True, title="Usage by Age Group"),
-        use_container_width=True
-    )
-
-    # GENDER
-    st.markdown("## 4. Gender")
-    gender_rates = df_seg.groupby("female")["sm_li"].mean()
-    st.plotly_chart(
-        px.bar(x=["Male","Female"], y=[gender_rates.get(0), gender_rates.get(1)],
-               title="Usage by Gender"),
-        use_container_width=True
-    )
-
-    # MARITAL
-    st.markdown("## 5. Marital Status")
-    mar_rates = df_seg.groupby("married")["sm_li"].mean()
-    st.plotly_chart(
-        px.bar(x=["Not Married","Married"],
-               y=[mar_rates.get(0), mar_rates.get(1)],
-               title="Usage by Marital Status"),
-        use_container_width=True
-    )
-
-    # PARENTS
-    st.markdown("## 6. Parenthood")
-    par_rates = df_seg.groupby("parent")["sm_li"].mean()
-    st.plotly_chart(
-        px.bar(x=["Not Parent","Parent"],
-               y=[par_rates.get(0), par_rates.get(1)],
-               title="Usage by Parenthood"),
-        use_container_width=True
-    )
-
-    # STRATEGIC RECS
-    st.markdown("## Strategic Recommendations")
-    st.markdown("""
-    **1. Prioritize high-probability adopters** — ages 26–45, higher-income, higher-educated  
-    **2. Tailor messaging** — gender, marital, and parenthood patterns matter  
-    **3. Use model probability outputs** to build more efficient audience segments  
-    **4. Develop awareness strategies** for older and lower-income groups  
-    """)
-
-
-# ==============================================================
-# TAB 4 — SHAP EXPLANATION
-# ==============================================================
+# ==========================
+# Tab 3 - Shap Explanation
+# ==========================
 with tab_shap:
 
     st.markdown("<h2 class='big-title'>SHAP Model Explanation</h2>", unsafe_allow_html=True)
@@ -336,6 +255,85 @@ with tab_shap:
     shap.waterfall_plot(shap_person[0], show=False)
     st.pyplot(fig, clear_figure=True)
 
+# ============================
+# Tab 4 - Marketing Insights
+# ==============================
+with tab_marketing:
+
+    st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
+
+    st.markdown("""
+    ### Executive Summary  
+    The model highlights which demographic segments show the strongest likelihood 
+    of LinkedIn adoption. These insights guide audience targeting, messaging strategy, 
+    and high-ROI segmentation.
+    """)
+
+    df_seg = df.copy()
+
+    # Education
+    st.markdown("## 1. Education Level")
+    edu_rates = df_seg.groupby("education")["sm_li"].mean()
+    st.plotly_chart(
+        px.bar(x=[education_labels[i] for i in edu_rates.index], y=edu_rates, title="Usage by Education"),
+        use_container_width=True
+    )
+
+    # Income
+    st.markdown("## 2. Income Level")
+    inc_rates = df_seg.groupby("income")["sm_li"].mean()
+    st.plotly_chart(
+        px.bar(x=[income_labels[i] for i in inc_rates.index], y=inc_rates, title="Usage by Income"),
+        use_container_width=True
+    )
+
+    # AGE GROUPS
+    st.markdown("## 3. Age Groups")
+    df_seg["age_group"] = pd.cut(df_seg["age"], bins=[18,25,35,45,55,65,120],
+                                 labels=["18–25","26–35","36–45","46–55","56–65","65+"])
+    age_rates = df_seg.groupby("age_group")["sm_li"].mean()
+    st.plotly_chart(
+        px.line(x=age_rates.index.astype(str), y=age_rates, markers=True, title="Usage by Age Group"),
+        use_container_width=True
+    )
+
+    # Gender
+    st.markdown("## 4. Gender")
+    gender_rates = df_seg.groupby("female")["sm_li"].mean()
+    st.plotly_chart(
+        px.bar(x=["Male","Female"], y=[gender_rates.get(0), gender_rates.get(1)],
+               title="Usage by Gender"),
+        use_container_width=True
+    )
+
+    # Marital
+    st.markdown("## 5. Marital Status")
+    mar_rates = df_seg.groupby("married")["sm_li"].mean()
+    st.plotly_chart(
+        px.bar(x=["Not Married","Married"],
+               y=[mar_rates.get(0), mar_rates.get(1)],
+               title="Usage by Marital Status"),
+        use_container_width=True
+    )
+
+    # Parent
+    st.markdown("## 6. Parenthood")
+    par_rates = df_seg.groupby("parent")["sm_li"].mean()
+    st.plotly_chart(
+        px.bar(x=["Not Parent","Parent"],
+               y=[par_rates.get(0), par_rates.get(1)],
+               title="Usage by Parenthood"),
+        use_container_width=True
+    )
+
+    # Recommendations
+    st.markdown("## Strategic Recommendations")
+    st.markdown("""
+    **1. Prioritize high-probability adopters** — ages 26–45, higher-income, higher-educated  
+    **2. Tailor messaging** — gender, marital, and parenthood patterns matter  
+    **3. Use model probability outputs** to build more efficient audience segments  
+    **4. Develop awareness strategies** for older and lower-income groups  
+    """)
 
 # =====================================
 # Tab 5 - Market Performance Diagnostics
