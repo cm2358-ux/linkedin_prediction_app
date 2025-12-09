@@ -129,7 +129,7 @@ tab_pred, tab_dynamic, tab_marketing, tab_shap, tab_perf = st.tabs(
 
 
 # ==========================
-# TAB 1 — PREDICTION
+# TAB 1 — Prediction
 # ===========================
 with tab_pred:
 
@@ -189,7 +189,7 @@ with tab_pred:
 
 
 # =================================
-# TAB 2 — INTERACTIVE ANALYTICS
+# TAB 2 — Interactive Analytics
 # =================================
 with tab_dynamic:
 
@@ -264,9 +264,9 @@ with tab_dynamic:
 
 
 
-# ==========================
+# =====================================
 # TAB 3 — MARKETING INSIGHTS
-# ===========================
+# =====================================
 with tab_marketing:
 
     st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
@@ -275,7 +275,7 @@ with tab_marketing:
     ### Executive Summary
 
     The LinkedIn prediction model highlights which demographic groups are
-    most likely to use the platform. These insights help refine audience
+    most likely to use the platform. These insights will help refine audience
     targeting, improve message testing, and support more effective media
     allocation. The findings emphasize strong adoption among higher-educated,
     higher-income users and early-to-mid career professionals, while also
@@ -284,7 +284,7 @@ with tab_marketing:
 
     df_seg = df.copy()
 
-    # EDUCATION
+    # Education
     st.markdown("## 1. Education Level")
     edu_rates = df_seg.groupby("education")["sm_li"].mean()
     edu_x = [education_labels[int(i)] for i in edu_rates.index]
@@ -304,7 +304,7 @@ with tab_marketing:
     Messaging should emphasize professional credibility, advancement, and expertise.
     """)
 
-    # INCOME
+    # Income
     st.markdown("## 2. Income Level")
     inc_rates = df_seg.groupby("income")["sm_li"].mean()
     inc_x = [income_labels[int(i)] for i in inc_rates.index]
@@ -324,7 +324,7 @@ with tab_marketing:
     Messaging for these users should focus on leadership, influence, and high-level opportunities.
     """)
 
-    # AGE
+    # Age
     st.markdown("## 3. Age Demographics")
     df_seg["age_group"] = pd.cut(
         df_seg["age"],
@@ -350,7 +350,7 @@ with tab_marketing:
     career progression, and industry visibility.
     """)
 
-    # GENDER
+    # Gender
     st.markdown("## 4. Gender Differences")
     gender_rates = df_seg.groupby("female")["sm_li"].mean()
 
@@ -369,7 +369,7 @@ with tab_marketing:
     and equitable career growth.
     """)
 
-    # MARITAL STATUS
+    # Marital Status
     st.markdown("## 5. Marital Status")
     mar_rates = df_seg.groupby("married")["sm_li"].mean()
 
@@ -387,7 +387,7 @@ with tab_marketing:
     Non-married users adopt LinkedIn at higher rates.
     """)
 
-    # PARENTHOOD
+    # Parenthood
     st.markdown("## 6. Parenthood Status")
     par_rates = df_seg.groupby("parent")["sm_li"].mean()
 
@@ -401,7 +401,7 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # RECOMMENDATIONS
+    # Reccomendations
     st.markdown("## Strategic Recommendations")
     st.markdown("""
     1. Focus investment on high-probability adopters: ages 26–45, higher income, higher education  
@@ -420,9 +420,9 @@ with tab_marketing:
 
 
 
-# ============================================================
-# TAB 4 — SHAP EXPLANATION
-# ============================================================
+# =========================
+# TAB 4 — Shap Explanation
+# ==========================
 with tab_shap:
 
     st.markdown("<h2 class='big-title'>SHAP Model Explanation</h2>", unsafe_allow_html=True)
@@ -455,9 +455,9 @@ with tab_shap:
 
 
 
-# ============================================================
-# TAB 5 — MODEL PERFORMANCE
-# ============================================================
+# ============================
+# TAB 5 — Model Performance
+# ==============================
 with tab_perf:
 
     st.markdown("<h2 class='big-title'>Model Diagnostics</h2>", unsafe_allow_html=True)
@@ -539,5 +539,5 @@ with tab_perf:
 
 # Footer
 st.markdown("---")
-st.caption("Developed by Conal Masters — Georgetown MSBA — Machine Learning Dashboard")
+st.caption("Developed by Conal Masters — Georgetown MSBA — Machine Learning LinkedIn Dashboard")
 
