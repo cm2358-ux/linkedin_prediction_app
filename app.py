@@ -39,7 +39,7 @@ def info(text):
 try:
     lr = joblib.load("model.pkl")
 except:
-    st.error("⚠️ model.pkl not found. Add it to your working directory.")
+    st.error(" model.pkl not found. Add it to your working directory.")
     st.stop()
 
 df = pd.read_csv("social_media_usage.csv")
@@ -106,7 +106,7 @@ person = pd.DataFrame({
 # -------------
 # Page Tabs
 # ------------
-tab_pred, tab_dynamic, tab_marketing, tab_shap, tab_perf = st.tabs(
+tab_pred, tab_dynamic, tab_shap, tab_marketing, tab_perf = st.tabs(
     ["Prediction","Interactive Analytics","SHAP Explanation","Marketing Insights","Model Performance"]
 )
 
