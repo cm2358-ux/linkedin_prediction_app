@@ -349,7 +349,7 @@ with tab_perf:
 
     # Confusion Matrix
     st.markdown("### Confusion Matrix")
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     sns.heatmap(confusion_matrix(y, preds), annot=True, fmt="d", cmap="Blues")
     st.pyplot(fig, clear_figure=True)
 
@@ -358,7 +358,7 @@ with tab_perf:
     fpr, tpr, _ = roc_curve(y, prob)
     auc_score = roc_auc_score(y, prob)
 
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(fpr, tpr, label=f"AUC = {auc_score:.3f}")
     plt.plot([0,1],[0,1],"--",color="gray")
     plt.legend()
@@ -366,20 +366,20 @@ with tab_perf:
 
     # Odd Ratio
     st.markdown("### Odds Ratios")
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     sns.barplot(x=np.exp(lr.coef_[0]), y=X.columns)
     st.pyplot(fig, clear_figure=True)
 
     # PROBABILITY DISTRIBUTION
     st.markdown("### Probability Distribution")
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     sns.histplot(prob, bins=20, kde=True)
     st.pyplot(fig, clear_figure=True)
 
     # CALIBRATION
     st.markdown("### Calibration Curve")
     true_prob, pred_prob = calibration_curve(y, prob, n_bins=10)
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(pred_prob, true_prob, marker="o")
     plt.plot([0,1],[0,1],"--",color="gray")
     st.pyplot(fig, clear_figure=True)
@@ -389,7 +389,7 @@ with tab_perf:
     age_range = np.arange(18,98)
     pdp_vals = [lr.predict_proba(X.assign(age=a))[:,1].mean() for a in age_range]
 
-    fig = plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(age_range, pdp_vals)
     st.pyplot(fig, clear_figure=True)
 
