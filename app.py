@@ -461,19 +461,19 @@ with tab_shap:
     shap_vals = explainer(X)
 
     st.markdown("### SHAP Feature Importance")
-    fig1 = plt.figure(figsize=(7,4))
+    fig1 = plt.figure(figsize=(5,4))
     shap.summary_plot(shap_vals.values, X, plot_type="bar", show=False)
     st.pyplot(fig1)
 
     st.markdown("### SHAP Summary Plot")
-    fig2 = plt.figure(figsize=(7,4))
+    fig2 = plt.figure(figsize=(5,4))
     shap.summary_plot(shap_vals.values, X, show=False)
     st.pyplot(fig2)
 
     st.markdown("### SHAP Waterfall Plot — Selected Profile")
     shap_person = explainer(person)
 
-    fig3 = plt.figure(figsize=(7,4))
+    fig3 = plt.figure(figsize=(5,4))
     shap.waterfall_plot(shap_person[0], show=False)
     st.pyplot(fig3)
 
@@ -491,7 +491,7 @@ with tab_perf:
 
     # Confusion Matrix
     cm = confusion_matrix(y, preds)
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
                 xticklabels=["Pred 0","Pred 1"],
                 yticklabels=["Actual 0","Actual 1"])
@@ -501,7 +501,7 @@ with tab_perf:
     fpr, tpr, _ = roc_curve(y, prob)
     auc_score = roc_auc_score(y, prob)
 
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     plt.plot(fpr, tpr, label=f"AUC = {auc_score:.3f}")
     plt.plot([0,1],[0,1],"--",color="gray")
     plt.xlabel("False Positive Rate")
@@ -512,20 +512,20 @@ with tab_perf:
     # Odds Ratios
     odds = np.exp(lr.coef_[0])
 
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     sns.barplot(x=odds, y=X.columns, orient="h")
     plt.title("Odds Ratios")
     st.pyplot(fig)
 
     # Probability Distribution
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     sns.histplot(prob, bins=20, kde=True)
     plt.title("Distribution of Predicted Probabilities")
     st.pyplot(fig)
 
     # Calibration Curve
     true_prob, pred_prob = calibration_curve(y, prob, n_bins=10)
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     plt.plot(pred_prob, true_prob, marker="o")
     plt.plot([0,1],[0,1],"--",color="gray")
     plt.xlabel("Predicted Probability")
@@ -541,7 +541,7 @@ with tab_perf:
         X_temp["age"] = a
         pdp_vals.append(lr.predict_proba(X_temp)[:,1].mean())
 
-    fig = plt.figure(figsize=(7,4))
+    fig = plt.figure(figsize=(5,4))
     plt.plot(age_range, pdp_vals)
     plt.xlabel("Age")
     plt.ylabel("Predicted Probability")
