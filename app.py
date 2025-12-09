@@ -323,35 +323,54 @@ with tab_dynamic:
 
 
 
+
 # ======================================================
-# TAB 3 — SHAP VALUES
+# TAB 3 — SHAP EXPLANATION
 # ======================================================
 with tab_shap:
 
-    st.markdown(f"<h2 class='big-title'>SHAP Model Explanation</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='big-title'>SHAP Model Explanation</h2>", unsafe_allow_html=True)
 
-    explainer = shap.LinearExplainer(lr, X)
-    shap_vals = explainer.shap_values(X)
+    # --------------------------------------------------
+    # Create SHAP Explainer (Universal API)
+    # --------------------------------------------------
+    explainer = shap.Explainer(lr, X)
+    shap_vals = explainer(X)
 
-    st.markdown(f"### SHAP Feature Importance {info('Shows which features impact predictions the most.')}", unsafe_allow_html=True)
+    # --------------------------------------------------
+    # Feature Importance (Bar Summary)
+    # --------------------------------------------------
+    st.markdown(
+        f"### SHAP Feature Importance {info('Shows which features contribute most to predictions.')}",
+        unsafe_allow_html=True
+    )
     fig1 = plt.figure(figsize=(6,4))
-    shap.summary_plot(shap_vals, X, plot_type="bar", show=False)
+    shap.summary_plot(shap_vals.values, X, plot_type="bar", show=False)
     st.pyplot(fig1)
 
-    st.markdown(f"### SHAP Summary Plot {info('Shows direction + magnitude of influence for each feature.')}", unsafe_allow_html=True)
+    # --------------------------------------------------
+    # Summary Plot (Direction & Magnitude)
+    # --------------------------------------------------
+    st.markdown(
+        f"### SHAP Summary Plot {info('Displays influence and direction for each feature across all observations.')}",
+        unsafe_allow_html=True
+    )
     fig2 = plt.figure(figsize=(6,4))
-    shap.summary_plot(shap_vals, X, show=False)
+    shap.summary_plot(shap_vals.values, X, show=False)
     st.pyplot(fig2)
 
-    st.markdown(f"### SHAP Waterfall Plot {info('Explains how THIS prediction was formed.')}", unsafe_allow_html=True)
-    fig3 = plt.figure(figsize=(6,4))
-    shap.waterfall_plot(
-        shap.Explanation(values=explainer.shap_values(person)[0],
-                         base_values=explainer.expected_value,
-                         data=person.iloc[0],
-                         feature_names=person.columns),
-        show=False
+    # --------------------------------------------------
+    # Waterfall Plot (Single Prediction)
+    # --------------------------------------------------
+    st.markdown(
+        f"### SHAP Waterfall Plot {info('Explains how the model produced the prediction for the selected profile.')}",
+        unsafe_allow_html=True
     )
+
+    shap_vals_person = explainer(person)
+
+    fig3 = plt.figure(figsize=(6,4))
+    shap.waterfall_plot(shap_vals_person[0], show=False)
     st.pyplot(fig3)
 
 
