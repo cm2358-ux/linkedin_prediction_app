@@ -242,17 +242,34 @@ with tab_shap:
 
 
 # ======================================================
-# TAB 4 — MARKETING INSIGHTS (CLEAN, NO safe_map)
+# TAB 4 — MARKETING INSIGHTS (CONSULTING-GRADE VERSION)
 # ======================================================
 with tab_marketing:
 
     st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
 
-    # ======================================================
+    # ------------------------------------------------------
+    # EXECUTIVE SUMMARY
+    # ------------------------------------------------------
+    st.markdown("""
+    ### Executive Summary
+
+    The LinkedIn prediction model highlights **which demographic profiles are most likely to adopt and actively use LinkedIn**.  
+    These insights support the marketing team in:
+
+    - Identifying high-value target segments  
+    - Tailoring messaging and creative content by demographic  
+    - Optimizing paid media and campaign allocation  
+    - Expanding adoption among under-penetrated groups  
+
+    The following sections break down adoption patterns across education, income, age, gender, marital status, and parenthood.
+    """)
+
+    # ------------------------------------------------------
     # EDUCATION INSIGHTS
-    # ======================================================
+    # ------------------------------------------------------
     st.markdown(
-        f"### LinkedIn Usage by Education {info('Shows which education levels have the highest LinkedIn adoption.')}",
+        f"## 1. Education Level {info('Higher education is strongly associated with LinkedIn usage.')}",
         unsafe_allow_html=True
     )
 
@@ -269,11 +286,17 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    Users with **college, master’s, or professional degrees** exhibit the highest LinkedIn usage.  
+    Messaging should emphasize **career advancement, networking, leadership**, and **professional credibility**.
+    """)
+
+    # ------------------------------------------------------
     # INCOME INSIGHTS
-    # ======================================================
+    # ------------------------------------------------------
     st.markdown(
-        f"### LinkedIn Usage by Income {info('LinkedIn usage typically increases with income and professional seniority.')}",
+        f"## 2. Income Level {info('Income reflects seniority and professional engagement levels.')}",
         unsafe_allow_html=True
     )
 
@@ -284,17 +307,23 @@ with tab_marketing:
         px.bar(
             x=inc_x,
             y=inc_rates.values,
-            labels={"x": "Income Bracket", "y": "Usage Rate"},
+            labels={"x": "Income Bracket", "y": "LinkedIn Usage Rate"},
             title="LinkedIn Usage by Income"
         ),
         use_container_width=True
     )
 
-    # ======================================================
-    # AGE TRENDS
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    Higher-income users show the **strongest adoption**, making them ideal for targeted professional campaigns.  
+    Position LinkedIn as a platform for **promotion opportunities, executive insights, and career acceleration**.
+    """)
+
+    # ------------------------------------------------------
+    # AGE INSIGHTS
+    # ------------------------------------------------------
     st.markdown(
-        f"### Age Trends {info('LinkedIn adoption peaks in early-to-mid career age ranges.')}",
+        f"## 3. Age Demographics {info('Age is one of the strongest predictors of LinkedIn adoption.')}",
         unsafe_allow_html=True
     )
 
@@ -318,11 +347,17 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    LinkedIn adoption peaks between **ages 26–45**, representing early-career and mid-career professionals.  
+    Campaigns should target these users with **leadership pathways, promotions, salary growth**, and **network-building themes**.
+    """)
+
+    # ------------------------------------------------------
     # GENDER INSIGHTS
-    # ======================================================
+    # ------------------------------------------------------
     st.markdown(
-        f"### Gender Usage {info('Compares LinkedIn engagement between men and women.')}",
+        f"## 4. Gender Differences {info('Gender-based engagement varies modestly.')}",
         unsafe_allow_html=True
     )
 
@@ -338,11 +373,17 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    Women show slightly **higher LinkedIn usage**.  
+    Effective messaging includes themes around **workplace empowerment, mentorship, and career equity**.
+    """)
+
+    # ------------------------------------------------------
     # MARITAL STATUS INSIGHTS
-    # ======================================================
+    # ------------------------------------------------------
     st.markdown(
-        f"### Marital Status {info('Shows differences in LinkedIn usage between married and unmarried adults.')}",
+        f"## 5. Marital Status {info('Lifestyle segmentation reveals behavioral differences.')}",
         unsafe_allow_html=True
     )
 
@@ -359,11 +400,17 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # ======================================================
-    # PARENTHOOD INSIGHTS (TWO GROUPS ONLY)
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    Non-married individuals display **higher adoption**, responding strongly to messaging around  
+    **career mobility, independence, and accelerated growth opportunities**.
+    """)
+
+    # ------------------------------------------------------
+    # PARENTHOOD INSIGHTS
+    # ------------------------------------------------------
     st.markdown(
-        f"### Parenthood Status {info('Compares LinkedIn activity between parents and non-parents.')}",
+        f"## 6. Parenthood Status {info('Parental responsibilities influence content needs and messaging responsiveness.')}",
         unsafe_allow_html=True
     )
 
@@ -380,15 +427,46 @@ with tab_marketing:
         use_container_width=True
     )
 
-    # ======================================================
-    # MARKETING TAKEAWAYS
-    # ======================================================
+    st.markdown("""
+    **Marketing Implication:**  
+    Non-parents adopt LinkedIn at higher rates, but parent users can be activated through themes of  
+    **flexibility, remote work, career stability**, and **balancing professional and personal life**.
+    """)
+
+    # ------------------------------------------------------
+    # STRATEGIC MARKETING RECOMMENDATIONS
+    # ------------------------------------------------------
+    st.markdown("## Strategic Recommendations")
+
+    st.write("""
+    **1. Focus spend on high-probability adopters**  
+    Target ages **26–45**, higher income brackets, and college-educated users.
+
+    **2. Develop differentiated creative by segment**  
+    - Women → empowerment, leadership, mentorship  
+    - Parents → flexibility, remote-work opportunities  
+    - Singles → accelerated career growth  
+
+    **3. Optimize paid media targeting**  
+    Use probability scores to identify high-ROI audience segments.
+
+    **4. Expand penetration in low-usage groups**  
+    Use awareness campaigns for older adults and lower-income brackets.
+
+    **5. Integrate segmentation into campaign planning**  
+    Build look-alike audiences, refine bidding strategies, and allocate spend dynamically.
+    """)
+
+    # ------------------------------------------------------
+    # KEY TAKEAWAYS
+    # ------------------------------------------------------
     st.markdown("## Key Takeaways")
     st.write("""
-    - Graduate-educated and high-income users show the strongest LinkedIn adoption  
-    - Engagement peaks among ages **26–45**, LinkedIn’s core professional demographic  
-    - Women display slightly higher adoption rates than men  
-    - Marital and parental status support additional lifestyle-based segmentation strategies  
+    - Education and income are the **strongest structural predictors** of LinkedIn usage  
+    - Ages 26–45 form the **core engagement demographic**  
+    - Women show slightly higher adoption  
+    - Lifestyle factors (marriage, parenthood) provide **valuable segmentation opportunities**  
+    - Insights directly support **media planning, creative strategy, and audience targeting**  
     """)
 
 
@@ -407,7 +485,7 @@ with tab_perf:
     # ------------------------------------------------------
     st.markdown(f"### Confusion Matrix {info('Shows correct vs incorrect classifications.')}", unsafe_allow_html=True)
     cm = confusion_matrix(y, lr.predict(X))
-    fig = plt.figure(figsize=(10,6))       #Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
     st.pyplot(fig)
 
@@ -465,7 +543,6 @@ with tab_perf:
     plt.xlabel("Age")
     plt.ylabel("Predicted Probability")
     st.pyplot(fig)
-
 
 
 # -------------------------------------------------------
