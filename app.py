@@ -1,6 +1,6 @@
-# =======================================
+# -----------------------------------
 # LinkedIn User Prediction Dashboard
-# =======================================
+# -----------------------------------
 
 import streamlit as st
 import pandas as pd
@@ -16,7 +16,7 @@ from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 from sklearn.calibration import calibration_curve
 
 # -------------------------------------------------------
-# STREAMLIT CONFIG + GLOBAL STYLE
+# STREAMLIT CONFIG & GLOBAL STYLE
 # -------------------------------------------------------
 st.set_page_config(page_title="LinkedIn User Prediction App", layout="wide")
 
@@ -31,50 +31,59 @@ st.markdown("""
 
 # Tooltip helper
 def info(text):
-    return f"<span title='{text}' style='cursor: help;'> ℹ️</span>"
+    return f"<span title='{text}' style='cursor: help;'> Info</span>"
 
 
 # -------------------------------------------------------
-# LOAD MODEL + DATA
+# LOAD MODEL & APPLY DATA CLEANING RULES
 # -------------------------------------------------------
-lr = joblib.load("model.pkl")
+try:
+    lr = joblib.load("model.pkl")
+except:
+    st.error("Model file 'model.pkl' not found.")
+    st.stop()
 
 df = pd.read_csv("social_media_usage.csv")
+
+# Create binary LinkedIn usage
 df["sm_li"] = (df["web1h"] == 1).astype(int)
-df["female"] = df["gender"].apply(lambda x: 1 if x == 2 else 0 if x == 1 else np.nan)
+
+# Recode gender (female = 1, male = 0)
+df["female"] = df["gender"].map({1: 0, 2: 1})
+
+# Rename columns to match model expectation
 df = df.rename(columns={"educ2": "education", "par": "parent", "marital": "married"})
+
+# Apply valid ranges (cleaning rules)
+df["income"] = df["income"].where(df["income"].between(1, 9))
+df["education"] = df["education"].where(df["education"].between(1, 8))
+df["age"] = df["age"].where(df["age"].between(1, 97))
+
+# Remove rows with missing values
+df = df.dropna(subset=["income", "education", "parent", "married", "female", "age", "sm_li"])
 
 X = df[["income", "education", "parent", "married", "female", "age"]]
 y = df["sm_li"]
-
-mask = X.notna().all(axis=1)
-df = df[mask]
-X = X[mask]
-y = y[mask]
 
 
 # -------------------------------------------------------
 # LABEL DICTIONARIES
 # -------------------------------------------------------
 income_labels = {
-    1:"Less than $10K",2:"$10K–$20K",3:"$20K–$30K",
-    4:"$30K–$40K",5:"$40K–$50K",6:"$50K–$75K",
-    7:"$75K–$100K",8:"$100K–$150K",9:"$150K+"
+    1:"Less than $10K", 2:"$10K–$20K", 3:"$20K–$30K",
+    4:"$30K–$40K", 5:"$40K–$50K", 6:"$50K–$75K",
+    7:"$75K–$100K", 8:"$100K–$150K", 9:"$150K+"
 }
 
 education_labels = {
-    1:"Less than High School",2:"High School",3:"Some College",
-    4:"College Graduate",5:"Master’s",6:"Professional Degree",
-    7:"Doctorate",8:"Technical/Other"
+    1:"Less than High School", 2:"High School", 3:"Some College",
+    4:"College Graduate", 5:"Master’s", 6:"Professional Degree",
+    7:"Doctorate", 8:"Technical/Other"
 }
-
-# Safe label mapper
-def safe_map(series, mapping):
-    return [mapping.get(v, f"Other ({v})") for v in series]
 
 
 # -------------------------------------------------------
-# SIDEBAR — USER INPUTS
+# SIDEBAR INPUTS
 # -------------------------------------------------------
 with st.sidebar:
     st.markdown("## Demographic Inputs")
@@ -86,10 +95,10 @@ with st.sidebar:
     gender = st.selectbox("Gender", ["Male", "Female"])
     age = st.slider("Age", 18, 97, 42)
 
+# Convert sidebar inputs to model-ready format
 parent_val = 1 if parent == "Yes" else 0
 married_val = 1 if married == "Yes" else 0
 female_val = 1 if gender == "Female" else 0
-
 
 person = pd.DataFrame({
     "income":[income],
@@ -102,11 +111,12 @@ person = pd.DataFrame({
 
 
 # -------------------------------------------------------
-# TABS
+# MAIN TABS
 # -------------------------------------------------------
 tab_pred, tab_dynamic, tab_shap, tab_marketing, tab_perf = st.tabs(
-    ["Prediction","Interactive Analytics","SHAP Explanation","Marketing Insights","Model Performance"]
+    ["Prediction", "Interactive Analytics", "SHAP Explanation", "Marketing Insights", "Model Performance"]
 )
+
 
 # ======================================================
 # TAB 1 — PREDICTION
