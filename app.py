@@ -407,7 +407,7 @@ with tab_perf:
     # ------------------------------------------------------
     st.markdown(f"### Confusion Matrix {info('Shows correct vs incorrect classifications.')}", unsafe_allow_html=True)
     cm = confusion_matrix(y, lr.predict(X))
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       #Zoomed out
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
     st.pyplot(fig)
 
@@ -416,7 +416,7 @@ with tab_perf:
     # ------------------------------------------------------
     st.markdown(f"### ROC Curve {info('Evaluates model’s ability to distinguish classes.')}", unsafe_allow_html=True)
     fpr, tpr, _ = roc_curve(y, prob)
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     plt.plot(fpr, tpr, label=f"AUC={roc_auc_score(y,prob):.3f}")
     plt.plot([0,1],[0,1],"--")
     plt.legend()
@@ -426,7 +426,7 @@ with tab_perf:
     # Odds Ratios
     # ------------------------------------------------------
     st.markdown(f"### Odds Ratios {info('Shows multiplicative effect each feature has on odds of LinkedIn use.')}", unsafe_allow_html=True)
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     sns.barplot(x=np.exp(lr.coef_[0]), y=X.columns)
     st.pyplot(fig)
 
@@ -434,7 +434,7 @@ with tab_perf:
     # Probability Distribution
     # ------------------------------------------------------
     st.markdown(f"### Probability Distribution {info('Shows model confidence across dataset?')}", unsafe_allow_html=True)
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     sns.histplot(prob, bins=20, kde=True, color="cyan")
     st.pyplot(fig)
 
@@ -443,7 +443,7 @@ with tab_perf:
     # ------------------------------------------------------
     st.markdown(f"### Calibration Curve {info('Tests probability calibration vs real outcomes.')}", unsafe_allow_html=True)
     true_prob, pred_prob = calibration_curve(y, prob, n_bins=10)
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     plt.plot(pred_prob, true_prob, marker="o")
     plt.plot([0,1],[0,1],"--")
     st.pyplot(fig)
@@ -460,7 +460,7 @@ with tab_perf:
         X_temp["age"] = a
         pdp_vals.append(lr.predict_proba(X_temp)[:,1].mean())
 
-    fig = plt.figure(figsize=(10,6))       # 🔥 Zoomed out
+    fig = plt.figure(figsize=(10,6))       # Zoomed out
     plt.plot(age_range, pdp_vals)
     plt.xlabel("Age")
     plt.ylabel("Predicted Probability")
