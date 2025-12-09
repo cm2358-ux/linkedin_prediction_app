@@ -1,6 +1,6 @@
-# ============================================================
-# LINKEDIN USER PREDICTION DASHBOARD — FINAL VERSION
-# ============================================================
+# ====================================================
+# LinkedIn User Prediction Dashboard - Final Version
+# ====================================================
 
 import streamlit as st
 import pandas as pd
@@ -16,9 +16,9 @@ from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
 from sklearn.calibration import calibration_curve
 
 
-# ------------------------------------------------------------
+# -----------------------------------------
 # Streamlit Configuration and Global Style
-# ------------------------------------------------------------
+# -----------------------------------------
 st.set_page_config(page_title="LinkedIn User Prediction App", layout="wide")
 
 st.markdown("""
@@ -36,9 +36,9 @@ def info(text):
     return f"<span title='{text}' style='cursor: help;'> Info</span>"
 
 
-# ------------------------------------------------------------
+# ----------------------------------------
 # Load Model and Dataset + Apply Cleaning
-# ------------------------------------------------------------
+# ----------------------------------------
 try:
     lr = joblib.load("model.pkl")
 except:
@@ -72,9 +72,9 @@ X = df[["income","education","parent","married","female","age"]]
 y = df["sm_li"]
 
 
-# ------------------------------------------------------------
+# --------------------
 # Label Dictionaries
-# ------------------------------------------------------------
+# --------------------
 income_labels = {
     1:"Less than $10K",2:"$10K–$20K",3:"$20K–$30K",
     4:"$30K–$40K",5:"$40K–$50K",6:"$50K–$75K",
@@ -88,9 +88,9 @@ education_labels = {
 }
 
 
-# ------------------------------------------------------------
+# --------------
 # Sidebar Inputs
-# ------------------------------------------------------------
+# ---------------
 with st.sidebar:
     st.markdown("## Demographic Inputs")
 
@@ -120,17 +120,17 @@ person = pd.DataFrame({
 })
 
 
-# ------------------------------------------------------------
+# ----------------
 # Main Tabs
-# ------------------------------------------------------------
+# ----------------
 tab_pred, tab_dynamic, tab_marketing, tab_shap, tab_perf = st.tabs(
     ["Prediction","Interactive Analytics","Marketing Insights","SHAP Explanation","Model Performance"]
 )
 
 
-# ============================================================
+# ==========================
 # TAB 1 — PREDICTION
-# ============================================================
+# ===========================
 with tab_pred:
 
     st.markdown("<h2 class='big-title'>Prediction Results</h2>", unsafe_allow_html=True)
@@ -188,9 +188,9 @@ with tab_pred:
 
 
 
-# ============================================================
+# =================================
 # TAB 2 — INTERACTIVE ANALYTICS
-# ============================================================
+# =================================
 with tab_dynamic:
 
     st.markdown(
@@ -264,9 +264,9 @@ with tab_dynamic:
 
 
 
-# ============================================================
+# ========================================
 # TAB 3 — MARKETING INSIGHTS
-# ============================================================
+# ========================================
 with tab_marketing:
 
     st.markdown("<h2 class='big-title'>Marketing Audience Insights</h2>", unsafe_allow_html=True)
@@ -284,11 +284,8 @@ with tab_marketing:
 
     df_seg = df.copy()
 
-    # ------------------------------------------------------
     # EDUCATION
-    # ------------------------------------------------------
     st.markdown("## 1. Education Level")
-
     edu_rates = df_seg.groupby("education")["sm_li"].mean()
     edu_x = [education_labels[int(i)] for i in edu_rates.index]
 
@@ -307,11 +304,8 @@ with tab_marketing:
     Messaging should emphasize professional credibility, advancement, and expertise.
     """)
 
-    # ------------------------------------------------------
     # INCOME
-    # ------------------------------------------------------
     st.markdown("## 2. Income Level")
-
     inc_rates = df_seg.groupby("income")["sm_li"].mean()
     inc_x = [income_labels[int(i)] for i in inc_rates.index]
 
@@ -330,11 +324,8 @@ with tab_marketing:
     Messaging for these users should focus on leadership, influence, and high-level opportunities.
     """)
 
-    # ------------------------------------------------------
     # AGE
-    # ------------------------------------------------------
     st.markdown("## 3. Age Demographics")
-
     df_seg["age_group"] = pd.cut(
         df_seg["age"],
         bins=[18,25,35,45,55,65,120],
@@ -359,11 +350,8 @@ with tab_marketing:
     career progression, and industry visibility.
     """)
 
-    # ------------------------------------------------------
     # GENDER
-    # ------------------------------------------------------
     st.markdown("## 4. Gender Differences")
-
     gender_rates = df_seg.groupby("female")["sm_li"].mean()
 
     st.plotly_chart(
@@ -381,11 +369,8 @@ with tab_marketing:
     and equitable career growth.
     """)
 
-    # ------------------------------------------------------
     # MARITAL STATUS
-    # ------------------------------------------------------
     st.markdown("## 5. Marital Status")
-
     mar_rates = df_seg.groupby("married")["sm_li"].mean()
 
     st.plotly_chart(
@@ -399,15 +384,11 @@ with tab_marketing:
     )
 
     st.markdown("""
-    Non-married users adopt LinkedIn at higher rates, responding strongly to messages
-    about mobility, opportunity, and accelerated growth.
+    Non-married users adopt LinkedIn at higher rates.
     """)
 
-    # ------------------------------------------------------
     # PARENTHOOD
-    # ------------------------------------------------------
     st.markdown("## 6. Parenthood Status")
-
     par_rates = df_seg.groupby("parent")["sm_li"].mean()
 
     st.plotly_chart(
@@ -420,32 +401,21 @@ with tab_marketing:
         use_container_width=True
     )
 
-    st.markdown("""
-    Parents tend to respond well to messaging centered on flexibility, remote work options,
-    and long-term professional stability.
-    """)
-
-    # ------------------------------------------------------
-    # STRATEGIC RECOMMENDATIONS
-    # ------------------------------------------------------
+    # RECOMMENDATIONS
     st.markdown("## Strategic Recommendations")
-
     st.markdown("""
-    1. Focus investment on high-probability adopters: ages 26–45, college-educated,
-       and higher-income professionals.
-    2. Tailor creative by demographic segment to improve engagement and relevance.
-    3. Use predicted probabilities to build and refine high-ROI audience groups.
-    4. Develop awareness campaigns for lower-income and older segments.
-    5. Integrate segmentation insights into creative development and bidding strategy.
+    1. Focus investment on high-probability adopters: ages 26–45, higher income, higher education  
+    2. Tailor messaging by gender, marital status, and parenthood  
+    3. Use predicted probabilities to refine audience segmentation  
+    4. Develop awareness strategies for lower-income and older audiences  
     """)
 
     st.markdown("## Key Takeaways")
-
     st.markdown("""
-    - Education and income are the strongest structural predictors.  
-    - Ages 26–45 form the core adoption cohort.  
-    - Women adopt LinkedIn slightly more often than men.  
-    - Marital and parenthood status provide valuable segmentation dimensions.  
+    - Education and income remain the strongest structural predictors  
+    - Ages 26–45 form the core adoption cohort  
+    - Women show slightly higher overall adoption  
+    - Marital and parenthood status provide meaningful segmentation dimensions  
     """)
 
 
@@ -460,22 +430,28 @@ with tab_shap:
     explainer = shap.Explainer(lr, X)
     shap_vals = explainer(X)
 
+    # Feature Importance
     st.markdown("### SHAP Feature Importance")
-    fig1 = plt.figure(figsize=(5,4))
+    fig1 = plt.figure(figsize=(7,4))
     shap.summary_plot(shap_vals.values, X, plot_type="bar", show=False)
-    st.pyplot(fig1)
+    plt.tight_layout()
+    st.pyplot(fig1, clear_figure=True)
 
+    # Summary Plot
     st.markdown("### SHAP Summary Plot")
-    fig2 = plt.figure(figsize=(5,4))
+    fig2 = plt.figure(figsize=(7,4))
     shap.summary_plot(shap_vals.values, X, show=False)
-    st.pyplot(fig2)
+    plt.tight_layout()
+    st.pyplot(fig2, clear_figure=True)
 
+    # Waterfall
     st.markdown("### SHAP Waterfall Plot — Selected Profile")
     shap_person = explainer(person)
 
-    fig3 = plt.figure(figsize=(5,4))
+    fig3 = plt.figure(figsize=(7,4))
     shap.waterfall_plot(shap_person[0], show=False)
-    st.pyplot(fig3)
+    plt.tight_layout()
+    st.pyplot(fig3, clear_figure=True)
 
 
 
@@ -490,49 +466,60 @@ with tab_perf:
     preds = lr.predict(X)
 
     # Confusion Matrix
+    st.markdown("### Confusion Matrix")
     cm = confusion_matrix(y, preds)
-    fig = plt.figure(figsize=(5,4))
+    fig = plt.figure(figsize=(7,4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
                 xticklabels=["Pred 0","Pred 1"],
                 yticklabels=["Actual 0","Actual 1"])
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
     # ROC Curve
+    st.markdown("### ROC Curve")
     fpr, tpr, _ = roc_curve(y, prob)
     auc_score = roc_auc_score(y, prob)
 
-    fig = plt.figure(figsize=(5,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(fpr, tpr, label=f"AUC = {auc_score:.3f}")
     plt.plot([0,1],[0,1],"--",color="gray")
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
     plt.legend()
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
     # Odds Ratios
+    st.markdown("### Odds Ratios")
     odds = np.exp(lr.coef_[0])
 
-    fig = plt.figure(figsize=(5,4))
+    fig = plt.figure(figsize=(7,4))
     sns.barplot(x=odds, y=X.columns, orient="h")
     plt.title("Odds Ratios")
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
     # Probability Distribution
-    fig = plt.figure(figsize=(5,4))
+    st.markdown("### Probability Distribution")
+    fig = plt.figure(figsize=(7,4))
     sns.histplot(prob, bins=20, kde=True)
     plt.title("Distribution of Predicted Probabilities")
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
-    # Calibration Curve
+    # Calibration
+    st.markdown("### Calibration Curve")
     true_prob, pred_prob = calibration_curve(y, prob, n_bins=10)
-    fig = plt.figure(figsize=(5,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(pred_prob, true_prob, marker="o")
     plt.plot([0,1],[0,1],"--",color="gray")
     plt.xlabel("Predicted Probability")
     plt.ylabel("Observed Probability")
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
-    # Partial Dependence Plot: Age
+    # Partial Dependence
+    st.markdown("### Partial Dependence: Age")
     age_range = np.arange(18,98)
     X_temp = X.copy()
     pdp_vals = []
@@ -541,18 +528,16 @@ with tab_perf:
         X_temp["age"] = a
         pdp_vals.append(lr.predict_proba(X_temp)[:,1].mean())
 
-    fig = plt.figure(figsize=(5,4))
+    fig = plt.figure(figsize=(7,4))
     plt.plot(age_range, pdp_vals)
     plt.xlabel("Age")
     plt.ylabel("Predicted Probability")
     plt.title("Partial Dependence Plot: Age")
-    st.pyplot(fig)
+    plt.tight_layout()
+    st.pyplot(fig, clear_figure=True)
 
 
 # Footer
 st.markdown("---")
 st.caption("Developed by Conal Masters — Georgetown MSBA — Machine Learning Dashboard")
-
-
-
 
